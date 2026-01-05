@@ -1,0 +1,72 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"ignoreUnknown": false
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab"
+	},
+	"linter": {
+		"enabled": true,
+		"domains": {
+			"react": "recommended"
+		},
+		"rules": {
+			"recommended": true,
+			"nursery": {
+				"noImportCycles": "error",
+				"useSortedClasses": {
+					"fix": "safe",
+					"level": "error",
+					"options": {
+						"functions": ["cn", "clsx", "twMerge", "cva"]
+					}
+				}
+			},
+			"style": {
+				"useBlockStatements": "error",
+				"useExportType": "error",
+				"useConsistentArrayType": "error",
+				"useConsistentCurlyBraces": "error"
+			},
+			"suspicious": {
+				"useAwait": "error",
+				"noDebugger": {
+					"level": "warn",
+					"fix": "none",
+					"options": {}
+				},
+				"noEmptyBlockStatements": "error",
+				"noConsole": {
+					"level": "warn",
+					"options": { "allow": ["error", "warn"] },
+					"fix": "none"
+				}
+			},
+			"a11y": {
+				"noSvgWithoutTitle": "off",
+				"useKeyWithClickEvents": "off",
+				"noStaticElementInteractions": "off"
+			},
+			"correctness": {
+				"noUnusedImports": "error",
+				"noUnusedVariables": "error",
+				"useUniqueElementIds": "off"
+			}
+		}
+	},
+	"assist": {
+		"enabled": true,
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	}
+}
