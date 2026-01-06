@@ -2,20 +2,44 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SwipeableCards } from "../components/SwipeableCards";
 import { useBreeds } from "../hooks/useBreeds";
+import { useVoteMutation } from "../hooks/useVoteMutation";
+import type { Breed, VoteRequest } from "../types/api";
 import type { SwipeDirection } from "../types/common";
 
 export const Route = createFileRoute("/")({
 	component: RouteComponent,
 });
 
-function RouteComponent() {
-	const { data: breeds, isLoading, error } = useBreeds();
-	const [currentIndex, setCurrentIndex] = useState(0); // TODO persist currentIndex
+const getImageId = (breed?: Breed): string => {
+	return breed?.reference_image_id ?? breed?.image?.id ?? "";
+};
 
-	const handleVote = (_direction: SwipeDirection) => {
+function RouteComponent() {
+	const { data: breeds = [], isLoading, error } = useBreeds();
+	const [currentIndex, setCurrentIndex] = useState(0); // TODO persist currentIndex
+	const { mutate } = useVoteMutation({
+		onError: (error, currentIndex) => {
+			console.error("Vote failed:", error, currentIndex);
+			setCurrentIndex(currentIndex); // Revert index on error
+		},
+	});
+
+	const handleVote = (direction: SwipeDirection) => {
 		setCurrentIndex((prev) => prev + 1);
 
-		// TODO : Implement vote handling logic
+		const imageId = getImageId(breeds[currentIndex]);
+
+		if (!imageId) {
+			console.error("No image ID found for the current breed.");
+			return;
+		}
+
+		const votePayload: VoteRequest = {
+			image_id: imageId,
+			value: direction === "right" ? 1 : -1,
+		};
+
+		mutate({ ...votePayload, currentIndex });
 	};
 
 	if (isLoading) {

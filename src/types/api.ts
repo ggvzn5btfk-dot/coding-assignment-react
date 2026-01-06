@@ -17,3 +17,14 @@ export interface Breed {
 	};
 	reference_image_id?: string;
 }
+
+export interface Vote {
+	id: number;
+	message?: string;
+	value?: 1 | -1; // 1 for like, -1 for dislike
+}
+
+export interface VoteRequest {
+	image_id: string;
+	value: 1 | -1;
+}
