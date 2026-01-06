@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ErrorScreen } from "../components/ErrorScreen";
 import { LoadingScreen } from "../components/LoadingScreen";
 import { SwipeableCards } from "../components/SwipeableCards";
+import { CURRENT_BREED_ID_STORAGE_KEY } from "../constants";
 import { useBreeds } from "../hooks/useBreeds";
 import { useVoteMutation } from "../hooks/useVoteMutation";
 import type { Breed, VoteRequest } from "../types/api";
@@ -17,8 +18,9 @@ const getImageId = (breed?: Breed): string => {
 };
 
 function RouteComponent() {
-	const { data: breeds = [], isLoading, error } = useBreeds();
-	const [currentIndex, setCurrentIndex] = useState(0); // TODO persist currentIndex
+	const mountedRef = useRef(false);
+	const { data: breeds = [], isLoading, error, isSuccess } = useBreeds();
+	const [currentIndex, setCurrentIndex] = useState(0);
 	const { mutate } = useVoteMutation({
 		onError: (error, currentIndex) => {
 			console.error("Vote failed:", error, currentIndex);
@@ -43,6 +45,37 @@ function RouteComponent() {
 
 		mutate({ ...votePayload, currentIndex });
 	};
+
+	// sync current index with breeds data on mount or breeds change
+	useEffect(() => {
+		if (!isSuccess || mountedRef.current) {
+			return;
+		}
+
+		const storedBreedId = localStorage.getItem(CURRENT_BREED_ID_STORAGE_KEY);
+		mountedRef.current = true;
+
+		if (storedBreedId) {
+			const index = breeds.findIndex(
+				(breed) => String(breed.id) === storedBreedId,
+			);
+			setCurrentIndex(index !== -1 ? index : 0);
+		}
+	}, [breeds, isSuccess]);
+
+	// Persist current breed ID to localStorage
+	useEffect(() => {
+		const id = breeds[currentIndex]?.id;
+
+		if (!id) {
+			return;
+		}
+
+		localStorage.setItem(
+			CURRENT_BREED_ID_STORAGE_KEY,
+			String(breeds[currentIndex]?.id ?? ""),
+		);
+	}, [currentIndex, breeds]);
 
 	if (isLoading) {
 		return <LoadingScreen />;
