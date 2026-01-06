@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BreedCard } from "../components/BreedCard";
+import { useState } from "react";
+import { SwipeableCards } from "../components/SwipeableCards";
 import { useBreeds } from "../hooks/useBreeds";
+import type { SwipeDirection } from "../types/common";
 
 export const Route = createFileRoute("/")({
 	component: RouteComponent,
@@ -8,8 +10,11 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
 	const { data: breeds, isLoading, error } = useBreeds();
+	const [currentIndex, setCurrentIndex] = useState(0); // TODO persist currentIndex
 
-	const handleVote = async (_action: "like" | "dislike") => {
+	const handleVote = (_direction: SwipeDirection) => {
+		setCurrentIndex((prev) => prev + 1);
+
 		// TODO : Implement vote handling logic
 	};
 
@@ -53,27 +58,29 @@ function RouteComponent() {
 		);
 	}
 
-	const currentBreed = breeds[0]; // FIXME: temporary
-
 	return (
-		<div className="flex min-h-screen flex-col">
+		<div className="flex min-h-screen flex-col justify-center overflow-hidden">
 			<div className="flex items-center justify-center p-4">
 				<div className="w-full max-w-sm">
-					<BreedCard breed={currentBreed} />
+					<SwipeableCards
+						currentIndex={currentIndex}
+						initialBreeds={breeds}
+						onSwipe={handleVote}
+					/>
 				</div>
 			</div>
 
 			<div className="mx-auto flex max-w-sm justify-center gap-6">
 				<button
 					type="button"
-					onClick={() => handleVote("dislike")}
+					onClick={() => handleVote("left")}
 					className="flex h-16 w-16 cursor-pointer items-center justify-center rounded-full bg-red-500 text-2xl text-white shadow-lg"
 				>
 					✕
 				</button>
 				<button
 					type="button"
-					onClick={() => handleVote("like")}
+					onClick={() => handleVote("right")}
 					className="flex h-16 w-16 cursor-pointer items-center justify-center rounded-full bg-green-500 text-2xl text-white shadow-lg"
 				>
 					♥
