@@ -1,0 +1,9 @@
+echo "\n✨ ===========================================" &&
+echo "🔄 TypeScript checking..." &&
+tsc --build tsconfig.app.json &&
+echo "✅ Success!\n" &&
+echo "⚡ ===========================================" &&
+echo "🔍 Biome checking..." &&
+biome check --write &&
+echo "✅ Success!" &&
+echo "✨ ==========================================\n"
