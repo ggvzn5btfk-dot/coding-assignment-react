@@ -8,6 +8,12 @@ export const dogApi = {
 		return response.json();
 	},
 
+	async getBreed(breedId: number): Promise<Breed> {
+		const response = await httpClient(`/breeds/${breedId}`);
+
+		return response.json();
+	},
+
 	async vote(voteData: VoteRequest): Promise<Vote> {
 		const response = await httpClient(
 			"/votes",

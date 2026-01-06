@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { ErrorScreen } from "../components/ErrorScreen";
+import { LoadingScreen } from "../components/LoadingScreen";
 import { SwipeableCards } from "../components/SwipeableCards";
 import { useBreeds } from "../hooks/useBreeds";
 import { useVoteMutation } from "../hooks/useVoteMutation";
@@ -43,35 +45,11 @@ function RouteComponent() {
 	};
 
 	if (isLoading) {
-		return (
-			<div className="flex min-h-screen items-center justify-center">
-				<div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg">
-					<div className="animate-pulse">
-						<div className="mb-4 h-64 rounded-xl bg-gray-200"></div>
-						<div className="mb-2 h-8 rounded bg-gray-200"></div>
-						<div className="mb-2 h-4 rounded bg-gray-200"></div>
-						<div className="h-4 w-3/4 rounded bg-gray-200"></div>
-					</div>
-				</div>
-			</div>
-		);
+		return <LoadingScreen />;
 	}
 
 	if (error) {
-		return (
-			<div className="flex min-h-screen flex-col justify-center">
-				<h3 className="mb-2 text-center font-bold text-red-800">
-					Something went wrong
-				</h3>
-				<button
-					type="button"
-					onClick={() => window.location.reload()}
-					className="rounded-lg bg-red-600 px-4 py-2 text-white"
-				>
-					Try Again
-				</button>
-			</div>
-		);
+		return <ErrorScreen />;
 	}
 
 	if (!breeds || breeds.length === 0) {

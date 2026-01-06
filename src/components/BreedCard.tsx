@@ -1,7 +1,10 @@
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { Link } from "@tanstack/react-router";
+import { IMAGE_PLACEHOLDER_URL } from "../constants";
 import type { Breed } from "../types/api";
+import { getImageUrl } from "../utils";
+import { Tag } from "./Tag";
 
 interface Props {
 	breed: Breed;
@@ -9,13 +12,6 @@ interface Props {
 	isTop?: boolean;
 	isNext?: boolean;
 }
-
-const IMAGE_PLACEHOLDER_URL =
-	"https://via.placeholder.com/400x300/e2e8f0/64748b?text=Dog+Photo";
-
-const getImageUrl = (breed: Breed): string => {
-	return `https://cdn2.thedogapi.com/images/${breed.reference_image_id}.jpg`;
-};
 
 export function BreedCard({
 	breed,
@@ -96,18 +92,11 @@ export function BreedCard({
 											.split(",")
 											.slice(0, 3)
 											.map((t) => (
-												<span
-													key={t}
-													className="rounded-full bg-blue-100 px-2 py-1 text-xs"
-												>
-													{t.trim()}
-												</span>
+												<Tag key={t}>{t.trim()}</Tag>
 											))}
 
 										{breed.temperament.split(",").length > 3 && (
-											<span className="rounded-full bg-gray-100 px-2 py-1 text-xs">
-												+{breed.temperament.split(",").length - 3} more
-											</span>
+											<Tag>+{breed.temperament.split(",").length - 3} more</Tag>
 										)}
 									</div>
 								</div>
